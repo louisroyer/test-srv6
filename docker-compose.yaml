@@ -1,0 +1,131 @@
+version: "3.9"
+services:
+  r1:
+    container_name: r1
+    hostname: r1
+    restart: always
+    build:
+      context: ./router_v6
+    image: router_v6
+    cap_add:
+      - NET_ADMIN
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=0
+      - net.ipv4.ip_forward=1
+      - net.ipv6.conf.all.forwarding=1
+      - net.ipv6.conf.all.seg6_enabled=1
+    volumes:
+      - ./conf/routing.sh:/usr/local/bin/routing.sh:ro
+      - ./conf/routing_r1.sh:/usr/local/bin/routing_srv6.sh:ro
+    environment:
+      - ROUTING=routing.sh
+      - ROUTING_SRV6=routing_srv6.sh
+    networks:
+      v6-n1-net:
+        ipv6_address: fd00:d0cc:e700:1111::2
+  r2:
+    container_name: r2
+    hostname: r2
+    restart: always
+    build:
+      context: ./router_v6
+    image: router_v6
+    cap_add:
+      - NET_ADMIN
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=0
+      - net.ipv4.ip_forward=1
+      - net.ipv6.conf.all.forwarding=1
+      - net.ipv6.conf.all.seg6_enabled=1
+      - net.ipv6.conf.eth0.seg6_enabled=1
+      - net.ipv6.conf.eth1.seg6_enabled=1
+    volumes:
+      - ./conf/routing.sh:/usr/local/bin/routing.sh:ro
+    environment:
+      - ROUTING=routing.sh
+    networks:
+      v6-n1-net:
+        ipv6_address: fd00:d0cc:e700:1111::3
+      v6-n2-net:
+        ipv6_address: fd00:d0cc:e700:1111:1::3
+  r3:
+    container_name: r3
+    hostname: r3
+    restart: always
+    build:
+      context: ./router_v6
+    image: router_v6
+    cap_add:
+      - NET_ADMIN
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=0
+      - net.ipv4.ip_forward=1
+      - net.ipv6.conf.all.forwarding=1
+      - net.ipv6.conf.all.seg6_enabled=1
+      - net.ipv6.conf.eth0.seg6_enabled=1
+      - net.ipv6.conf.eth1.seg6_enabled=1
+    volumes:
+      - ./conf/routing.sh:/usr/local/bin/routing.sh:ro
+    environment:
+      - ROUTING=routing.sh
+    networks:
+      v6-n2-net:
+        ipv6_address: fd00:d0cc:e700:1111:1::2
+      v6-n3-net:
+        ipv6_address: fd00:d0cc:e700:1111:2::3
+  r4:
+    container_name: r4
+    hostname: r4
+    restart: always
+    build:
+      context: ./router_v6
+    image: router_v6
+    cap_add:
+      - NET_ADMIN
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=0
+      - net.ipv4.ip_forward=1
+      - net.ipv6.conf.all.forwarding=1
+      - net.ipv6.conf.all.seg6_enabled=1
+    volumes:
+      - ./conf/routing.sh:/usr/local/bin/routing.sh:ro
+      - ./conf/routing_r4.sh:/usr/local/bin/routing_srv6.sh:ro
+    environment:
+      - ROUTING=routing.sh
+      - ROUTING_SRV6=routing_srv6.sh
+    networks:
+      v6-n3-net:
+        ipv6_address: fd00:d0cc:e700:1111:2::2
+
+
+networks:
+  v6-n1-net:
+    enable_ipv6: true
+    name: v6-n1-net
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: br-v6-n1-net 
+    ipam:
+      driver: default
+      config:
+        - subnet: fd00:d0cc:e700:1111::/80
+  v6-n2-net:
+    enable_ipv6: true
+    name: v6-n2-net
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: br-v6-n2-net 
+    ipam:
+      driver: default
+      config:
+        - subnet: fd00:d0cc:e700:1111:1::/80
+  v6-n3-net:
+    enable_ipv6: true
+    name: v6-n3-net
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: br-v6-n3-net 
+    ipam:
+      driver: default
+      config:
+        - subnet: fd00:d0cc:e700:1111:2::/80
