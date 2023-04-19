@@ -47,9 +47,6 @@ services:
       - net.ipv6.conf.all.forwarding=1
       - net.ipv6.conf.all.seg6_enabled=1
       - net.ipv6.conf.default.seg6_enabled=1
-      - net.ipv6.conf.n12-0.seg6_enabled=1
-      - net.ipv6.conf.n13-0.seg6_enabled=1
-      - net.ipv6.conf.client-0.seg6_enabled=1
     volumes:
       - ./conf/routing.sh:/usr/local/bin/routing.sh:ro
       - ./conf/routing_r1.sh:/usr/local/bin/routing_srv6.sh:ro
@@ -95,7 +92,7 @@ services:
       - net.ipv6.conf.default.seg6_enabled=1
       - net.ipv6.conf.n13-0.seg6_enabled=1
       - net.ipv6.conf.n23-0.seg6_enabled=1
-      - net.ipv6.conf.n34-0.seg6_enabled=1
+      - net.ipv6.conf.ninter-0.seg6_enabled=1
     volumes:
       - ./conf/routing.sh:/usr/local/bin/routing.sh:ro
       - ./conf/routing_r3.sh:/usr/local/bin/routing_srv6.sh:ro
@@ -104,8 +101,8 @@ services:
         ipv6_address: fd00:d0cc:e700:1111:13::3
       v6-n23:
         ipv6_address: fd00:d0cc:e700:1111:23::3
-      v6-n34:
-        ipv6_address: fd00:d0cc:e700:1111:34::3
+      v6-ninter:
+        ipv6_address: fd00:d0cc:e700:1111:55::3
   r4:
     container_name: r4
     hostname: r4
@@ -115,9 +112,6 @@ services:
       - net.ipv4.ip_forward=1
       - net.ipv6.conf.all.forwarding=1
       - net.ipv6.conf.default.seg6_enabled=1
-      - net.ipv6.conf.n24-0.seg6_enabled=1
-      - net.ipv6.conf.n34-0.seg6_enabled=1
-      - net.ipv6.conf.target-0.seg6_enabled=1
       - net.ipv6.conf.all.seg6_enabled=1
     volumes:
       - ./conf/routing.sh:/usr/local/bin/routing.sh:ro
@@ -129,6 +123,22 @@ services:
         ipv6_address: fd00:d0cc:e700:1111:24::4
       v6-n34:
         ipv6_address: fd00:d0cc:e700:1111:34::4
+  r-inter:
+    container_name: r-inter
+    hostname: r-inter
+    <<: *anchor-router
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=0
+      - net.ipv4.ip_forward=1
+      - net.ipv6.conf.all.forwarding=1
+    volumes:
+      - ./conf/routing.sh:/usr/local/bin/routing.sh:ro
+      - ./conf/routing_r5.sh:/usr/local/bin/routing_srv6.sh:ro
+    networks:
+      v6-ninter:
+        ipv6_address: fd00:d0cc:e700:1111:55::4
+      v6-n34:
+        ipv6_address: fd00:d0cc:e700:1111:34::3
   c1:
     container_name: c1
     hostname: c1
@@ -238,6 +248,19 @@ networks:
         - subnet: fd00:d0cc:e700:1111:34::/80
           ip_range: fd00:d0cc:e700:1111:34:8000::/81
           gateway: fd00:d0cc:e700:1111:34::fffe
+  v6-ninter:
+    enable_ipv6: true
+    name: v6-ninter-net
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: br-v6-ninter 
+      com.docker.network.container_iface_prefix: ninter- 
+    ipam:
+      driver: default
+      config:
+        - subnet: fd00:d0cc:e700:1111:55::/80
+          ip_range: fd00:d0cc:e700:1111:55:8000::/81
+          gateway: fd00:d0cc:e700:1111:55::fffe
   v6-n24:
     enable_ipv6: true
     name: v6-n24-net
