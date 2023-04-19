@@ -28,6 +28,7 @@ x-group:
     volumes:
       - ./conf/routing.sh:/usr/local/bin/routing.sh:ro
     environment:
+      ROUTING_SRV6: routing_srv6.sh
       ROUTING: routing.sh
   x-group-anchor-router: &anchor-router
     <<: *base-router
@@ -72,6 +73,9 @@ services:
       - net.ipv6.conf.n23-0.seg6_enabled=1
       - net.ipv6.conf.n24-0.seg6_enabled=1
       - net.ipv6.conf.all.seg6_enabled=1
+    volumes:
+      - ./conf/routing.sh:/usr/local/bin/routing.sh:ro
+      - ./conf/routing_r2.sh:/usr/local/bin/routing_srv6.sh:ro
     networks:
       v6-n12:
         ipv6_address: fd00:d0cc:e700:1111:12::2
@@ -92,6 +96,9 @@ services:
       - net.ipv6.conf.n13-0.seg6_enabled=1
       - net.ipv6.conf.n23-0.seg6_enabled=1
       - net.ipv6.conf.n34-0.seg6_enabled=1
+    volumes:
+      - ./conf/routing.sh:/usr/local/bin/routing.sh:ro
+      - ./conf/routing_r3.sh:/usr/local/bin/routing_srv6.sh:ro
     networks:
       v6-n13:
         ipv6_address: fd00:d0cc:e700:1111:13::3
