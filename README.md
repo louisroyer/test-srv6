@@ -22,11 +22,11 @@
 Note: cannot configure default address pool for ipv6 to `{base: "fd00:d0cc:e7::/48", "size":64}` because of [moby/moby#42801](https://github.com/moby/moby/issues/42801).
 
 
-## ping r1 from r4
+## ping C1 from T1 
 
 ```text
-$ docker exec -it r4 bash
-root@r4:/# ping  fd00:d0cc:e700:1111::2
+$ docker exec -it c1 bash
+root@c1:/# ping 10.0.2.21
 ```
 
 
