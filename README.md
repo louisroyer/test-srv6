@@ -22,7 +22,7 @@
 Note: cannot configure default address pool for ipv6 to `{base: "fd00:d0cc:e7::/48", "size":64}` because of [moby/moby#42801](https://github.com/moby/moby/issues/42801).
 
 
-## ping C1 from T1 
+## ping T1 from C1 
 
 ```text
 $ docker exec -it c1 bash
