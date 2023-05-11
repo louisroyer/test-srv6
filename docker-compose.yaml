@@ -7,6 +7,21 @@ x-group:
     image: router_v6
     cap_add:
       - NET_ADMIN
+  x-base-router-nextmn: &base-router-nextmn
+    restart: always
+    build:
+      context: ./router_v6_nextmn
+      args:
+        NEXTMNSR_RELEASE: v0.0.3
+    image: router_v6_nextmn
+    cap_add:
+      - NET_ADMIN
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=0
+      - net.ipv4.ip_forward=1
+      - net.ipv6.conf.all.forwarding=1
+      - net.ipv6.conf.all.seg6_enabled=1
+      - net.ipv6.conf.default.seg6_enabled=1
   x-base-router: &base-router
     <<: *base
     sysctls:
@@ -46,10 +61,14 @@ services:
   r1:
     container_name: r1
     hostname: r1
-    <<: *anchor-router
+    <<: *base-router-nextmn
     volumes:
-      - ./conf/routing.sh:/usr/local/bin/routing.sh:ro
-      - ./conf/routing_r1.sh:/usr/local/bin/routing_srv6.sh:ro
+      - ./conf/pre-init-hook_r1.sh:/usr/local/bin/pre-init-hook.sh:ro
+      - ./conf/post-init-hook_r1.sh:/usr/local/bin/post-init-hook.sh:ro
+      - ./conf/r1-nextmn.yaml:/etc/nextmn-srv6/config.yaml
+    command: ["-c", "/etc/nextmn-srv6/config.yaml"]
+    devices:
+      - "/dev/net/tun:/dev/net/tun"
     networks:
       v6-n12:
         ipv6_address: fd00:d0cc:e700:1111:12::1
