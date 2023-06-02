@@ -12,5 +12,8 @@ endpoints:
   - sid: "fd00:51D5:0000:4:71::/128"
     behavior: "End.M.GTP6.D"
     options:
-      set-source-address: "fd00:51D5:0000:2:69::/128"
+      set-source-address: "fd00:51D5:0000:4:69::/128"
+policy:
+  segments-list:
+    - "fd00:51D5:0000:4:11::/80"
 
