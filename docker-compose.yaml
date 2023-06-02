@@ -112,6 +112,7 @@ services:
       - ./conf/post-init-hook_r4.sh:/usr/local/bin/post-init-hook.sh:ro
       - ./conf/r4-nextmn.yaml:/etc/nextmn-srv6/config.yaml
       - ../nextmn-srv6/nextmn-srv6:/usr/local/bin/nextmn-srv6:ro
+      - ./vol:/volume
     networks:
       v4-target:
         ipv4_address: 10.0.2.4
