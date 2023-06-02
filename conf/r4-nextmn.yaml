@@ -9,4 +9,8 @@ endpoints:
     behavior: "End.DX4"
   - sid: "fd00:51D5:0000:4:1::/80"
     behavior: "End"
+  - sid: "fd00:51D5:0000:4:71::/128"
+    behavior: "End.M.GTP6.D"
+    options:
+      set-source-address: "fd00:51D5:0000:2:69::/128"
 
