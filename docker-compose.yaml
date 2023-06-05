@@ -12,7 +12,7 @@ x-group:
     build:
       context: ./router_v6_nextmn
       args:
-        NEXTMNSR_RELEASE: v0.0.3
+        NEXTMNSR_RELEASE: v0.0.4
     image: router_v6_nextmn
     cap_add:
       - NET_ADMIN
