@@ -11,6 +11,7 @@ x-group:
     restart: always
     build:
       context: ./router_v6_nextmn
+      target: router_v6_nextmn
       args:
         NEXTMNSR_RELEASE: v0.0.4
     image: router_v6_nextmn
@@ -29,6 +30,7 @@ x-group:
     restart: always
     build:
       context: ./router_v6_nextmn
+      target: router_v6_nextmn_dev
     image: router_v6_nextmn_dev
     cap_add:
       - NET_ADMIN
@@ -60,11 +62,12 @@ services:
   r1:
     container_name: r1
     hostname: r1
-    <<: *base-router-nextmn
+    <<: *base-router-nextmn-dev
     volumes:
       - ./conf/pre-init-hook.sh:/usr/local/bin/pre-init-hook.sh:ro
       - ./conf/post-init-hook_r1.sh:/usr/local/bin/post-init-hook.sh:ro
       - ./conf/r1-nextmn.yaml:/etc/nextmn-srv6/config.yaml
+      - ../nextmn-srv6/nextmn-srv6:/usr/local/bin/nextmn-srv6:ro
     networks:
       v6-n12:
         ipv6_address: fd00:d0cc:e700:1111:12::1
@@ -81,21 +84,24 @@ services:
       - ./conf/post-init-hook_r2.sh:/usr/local/bin/post-init-hook.sh:ro
       - ./conf/r2-nextmn.yaml:/etc/nextmn-srv6/config.yaml
       - ../nextmn-srv6/nextmn-srv6:/usr/local/bin/nextmn-srv6:ro
+      - ./vol:/volume
     networks:
       v6-n12:
         ipv6_address: fd00:d0cc:e700:1111:12::2
       v6-n23:
         ipv6_address: fd00:d0cc:e700:1111:23::2
       v6-n24:
+        ipv4_address: 10.0.78.2
         ipv6_address: fd00:d0cc:e700:1111:24::2
   r3:
     container_name: r3
     hostname: r3
-    <<: *base-router-nextmn
+    <<: *base-router-nextmn-dev
     volumes:
       - ./conf/pre-init-hook.sh:/usr/local/bin/pre-init-hook.sh:ro
       - ./conf/post-init-hook_r3.sh:/usr/local/bin/post-init-hook.sh:ro
       - ./conf/r3-nextmn.yaml:/etc/nextmn-srv6/config.yaml
+      - ../nextmn-srv6/nextmn-srv6:/usr/local/bin/nextmn-srv6:ro
     networks:
       v6-n13:
         ipv6_address: fd00:d0cc:e700:1111:13::3
@@ -117,6 +123,7 @@ services:
       v4-target:
         ipv4_address: 10.0.2.4
       v6-n24:
+        ipv4_address: 10.0.78.4
         ipv6_address: fd00:d0cc:e700:1111:24::4
       v6-n34:
         ipv6_address: fd00:d0cc:e700:1111:34::4
@@ -270,6 +277,7 @@ networks:
     ipam:
       driver: default
       config:
+        - subnet: 10.0.78.0/24
         - subnet: fd00:d0cc:e700:1111:24::/80
           ip_range: fd00:d0cc:e700:1111:24:8000::/81
           gateway: fd00:d0cc:e700:1111:24::fffe
