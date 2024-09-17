@@ -21,6 +21,9 @@
 
 Note: cannot configure default address pool for ipv6 to `{base: "fd00:d0cc:e7::/48", "size":64}` because of [moby/moby#42801](https://github.com/moby/moby/issues/42801).
 
+## Topology
+
+![topology](./doc/topology.svg)
 
 ## ping T1 from C1 
 
